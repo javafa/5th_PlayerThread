@@ -31,14 +31,32 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         textCurrent = findViewById(R.id.textCurrent);
         textDuration = findViewById(R.id.textDuration);
+        //식바
         seekBar = findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(mediaPlayer != null && fromUser)
+                    mediaPlayer.seekTo(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        // 버튼
         imageButton = findViewById(R.id.imageButton);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(playerStatus == STOP || playerStatus == PAUSE){
                     mediaPlayer.start();
-                    thread.start();
                     playerStatus = PLAY;
                     imageButton.setImageResource(android.R.drawable.ic_media_pause);
                 }else if( playerStatus == PLAY){
@@ -60,15 +78,16 @@ public class MainActivity extends AppCompatActivity {
         playerStatus = STOP;
         // Seekbar 스레드를 초기화
         thread = new SeekbarThread();
+        thread.start();
     }
 
     private void setDuration(int position){
-        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
         textDuration.setText(sdf.format(position));
     }
 
     private void setCurrent(int position){
-        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
         textCurrent.setText(sdf.format(position));
     }
 
@@ -92,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     // 미디어 플레이어의 현재 위치
                     int position = mediaPlayer.getCurrentPosition();
                     setSeekBar(position);
-                    Thread.sleep(1000);
+                    Thread.sleep(10);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
